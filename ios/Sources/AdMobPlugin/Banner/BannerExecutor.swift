@@ -2,38 +2,30 @@ import Foundation
 import Capacitor
 import GoogleMobileAds
 
-class BannerExecutor: NSObject, GADBannerViewDelegate {
+class BannerExecutor: NSObject, BannerViewDelegate {
     weak var plugin: AdMobPlugin?
-    var bannerView: GADBannerView!
+    var bannerView: BannerView!
 
-    func showBanner(_ call: CAPPluginCall, _ request: GADRequest, _ adUnitID: String) {
+    func showBanner(_ call: CAPPluginCall, _ request: Request, _ adUnitID: String) {
         if let rootViewController = plugin?.getRootVC() {
 
             let adSize = call.getString("adSize") ?? "ADAPTIVE_BANNER"
             let adPosition = call.getString("position") ?? "BOTTOM_CENTER"
             let adMargin = call.getInt("margin") ?? 0
 
-            var bannerSize: GADAdSize
+            var bannerSize: AdSize
 
             switch adSize {
             case "BANNER":
-                bannerSize = GADAdSizeBanner
-                break
+                bannerSize = AdSizeBanner
             case "LARGE_BANNER":
-                bannerSize = GADAdSizeLargeBanner
-                break
+                bannerSize = AdSizeLargeBanner
             case "FULL_BANNER":
-                bannerSize = GADAdSizeFullBanner
-                break
+                bannerSize = AdSizeFullBanner
             case "LEADERBOARD":
-                bannerSize = GADAdSizeLeaderboard
-                break
+                bannerSize = AdSizeLeaderboard
             case "MEDIUM_RECTANGLE":
-                bannerSize = GADAdSizeMediumRectangle
-                break
-            case "SMART_BANNER":
-                bannerSize = kGADAdSizeSmartBannerPortrait
-                break
+                bannerSize = AdSizeMediumRectangle
             default: // ADAPTIVE_BANNER
                 let frame = { () -> CGRect in
                     // Here safe area is taken into account, hence the view frame is used
@@ -45,11 +37,10 @@ class BannerExecutor: NSObject, GADBannerViewDelegate {
                     }
                 }()
                 let viewWidth = frame.size.width
-                bannerSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(viewWidth)
-                break
+                bannerSize = currentOrientationAnchoredAdaptiveBanner(width: viewWidth)
             }
 
-            self.bannerView = GADBannerView(adSize: bannerSize)
+            self.bannerView = BannerView(adSize: bannerSize)
             self.addBannerViewToView(self.bannerView, adPosition, adMargin)
             self.bannerView.translatesAutoresizingMaskIntoConstraints = false
             self.bannerView.adUnitID = adUnitID
@@ -107,7 +98,7 @@ class BannerExecutor: NSObject, GADBannerViewDelegate {
         call.resolve([:])
     }
 
-    private func addBannerViewToView(_ bannerView: GADBannerView, _ adPosition: String, _ Margin: Int) {
+    private func addBannerViewToView(_ bannerView: BannerView, _ adPosition: String, _ margin: Int) {
         removeBannerViewToView()
         if let rootViewController = plugin?.getRootVC() {
 
@@ -121,7 +112,7 @@ class BannerExecutor: NSObject, GADBannerViewDelegate {
                                     toItem: rootViewController.view.safeAreaLayoutGuide,
                                     attribute: adPosition == "TOP_CENTER" ? .top : .bottom,
                                     multiplier: 1,
-                                    constant: CGFloat(Int(Margin) * -1)),
+                                    constant: CGFloat(Int(margin) * -1)),
                  NSLayoutConstraint(item: bannerView,
                                     attribute: .centerX,
                                     relatedBy: .equal,
@@ -144,18 +135,19 @@ class BannerExecutor: NSObject, GADBannerViewDelegate {
     }
 
     /// Tells the delegate an ad request loaded an ad.
-    func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+    func bannerViewDidReceiveAd(_ bannerView: BannerView) {
         NSLog("bannerViewDidReceiveAd")
 
         self.plugin?.notifyListeners(BannerAdPluginEvents.SizeChanged.rawValue, data: [
             "width": bannerView.frame.width,
             "height": bannerView.frame.height
         ])
-        self.plugin?.notifyListeners(BannerAdPluginEvents.Loaded.rawValue, data: [:])
+        self.plugin?.notifyListeners(BannerAdPluginEvents.Loaded.rawValue, data: [:]
+        )
     }
 
     /// Tells the delegate an ad request failed.
-    func bannerView(_ bannerView: GADBannerView,
+    func bannerView(_ bannerView: BannerView,
                     didFailToReceiveAdWithError error: Error) {
         NSLog("bannerView:didFailToReceiveAdWithError: \(error.localizedDescription)")
         self.removeBannerViewToView()
@@ -169,18 +161,21 @@ class BannerExecutor: NSObject, GADBannerViewDelegate {
         ])
     }
 
-    func bannerViewDidRecordImpression(_ bannerView: GADBannerView) {
-        self.plugin?.notifyListeners(BannerAdPluginEvents.AdImpression.rawValue, data: [:])
+    func bannerViewDidRecordImpression(_ bannerView: BannerView) {
+        self.plugin?.notifyListeners(BannerAdPluginEvents.AdImpression.rawValue, data: [:]
+        )
     }
 
     /// Tells the delegate that a full-screen view will be presented in response
     /// to the user clicking on an ad.
-    func bannerViewWillPresentScreen(_ bannerView: GADBannerView) {
-        self.plugin?.notifyListeners(BannerAdPluginEvents.Opened.rawValue, data: [:])
+    func bannerViewWillPresentScreen(_ bannerView: BannerView) {
+        self.plugin?.notifyListeners(BannerAdPluginEvents.Opened.rawValue, data: [:]
+        )
     }
 
     /// Tells the delegate that the full-screen view will be dismissed.
-    func bannerViewWillDismissScreen(_ bannerView: GADBannerView) {
-        self.plugin?.notifyListeners(BannerAdPluginEvents.Closed.rawValue, data: [:])
+    func bannerViewWillDismissScreen(_ bannerView: BannerView) {
+        self.plugin?.notifyListeners(BannerAdPluginEvents.Closed.rawValue, data: [:]
+        )
     }
 }

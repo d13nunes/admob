@@ -1084,10 +1084,10 @@ addListener(eventName: RewardInterstitialAdPluginEvents.Showed, listenerFunc: ()
 
 This interface extends <a href="#adoptions">AdOptions</a>
 
-| Prop           | Type                                                          | Description                                                                                                                               | Default                      | Since |
-| -------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ----- |
-| **`adSize`**   | <code><a href="#banneradsize">BannerAdSize</a></code>         | Banner Ad Size, defaults to ADAPTIVE_BANNER. IT can be: ADAPTIVE_BANNER, SMART_BANNER, BANNER, MEDIUM_RECTANGLE, FULL_BANNER, LEADERBOARD | <code>ADAPTIVE_BANNER</code> | 3.0.0 |
-| **`position`** | <code><a href="#banneradposition">BannerAdPosition</a></code> | Set Banner Ad position. TOP_CENTER or CENTER or BOTTOM_CENTER                                                                             | <code>TOP_CENTER</code>      | 1.1.2 |
+| Prop           | Type                                                          | Description                                                                                                                 | Default                      | Since |
+| -------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ----- |
+| **`adSize`**   | <code><a href="#banneradsize">BannerAdSize</a></code>         | Banner Ad Size, defaults to ADAPTIVE_BANNER. IT can be: ADAPTIVE_BANNER, BANNER, MEDIUM_RECTANGLE, FULL_BANNER, LEADERBOARD | <code>ADAPTIVE_BANNER</code> | 3.0.0 |
+| **`position`** | <code><a href="#banneradposition">BannerAdPosition</a></code> | Set Banner Ad position. TOP_CENTER or CENTER or BOTTOM_CENTER                                                               | <code>TOP_CENTER</code>      | 1.1.2 |
 
 
 #### PluginListenerHandle
@@ -1226,7 +1226,6 @@ From T, pick a set of properties whose keys are in the union K
 | **`MEDIUM_RECTANGLE`** | <code>'MEDIUM_RECTANGLE'</code> | Interactive Advertising Bureau (IAB) medium rectangle ad size (300x250 density-independent pixels). |
 | **`LEADERBOARD`**      | <code>'LEADERBOARD'</code>      | Interactive Advertising Bureau (IAB) leaderboard ad size (728x90 density-independent pixels).       |
 | **`ADAPTIVE_BANNER`**  | <code>'ADAPTIVE_BANNER'</code>  | A dynamically sized banner that is full-width and auto-height.                                      |
-| **`SMART_BANNER`**     | <code>'SMART_BANNER'</code>     |                                                                                                     |
 
 
 #### BannerAdPosition

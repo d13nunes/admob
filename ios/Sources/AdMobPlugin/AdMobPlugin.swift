@@ -51,7 +51,7 @@ public class AdMobPlugin: CAPPlugin, CAPBridgedPlugin {
         self.consentExecutor.plugin = self
         self.setRequestConfiguration(call)
 
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
+      MobileAds.shared.start(completionHandler: nil)
         call.resolve([:])
     }
 
@@ -74,7 +74,7 @@ public class AdMobPlugin: CAPPlugin, CAPBridgedPlugin {
 
     @objc func setApplicationMuted(_ call: CAPPluginCall) {
         if let shouldMute = call.getBool("muted") {
-            GADMobileAds.sharedInstance().applicationMuted = shouldMute
+          MobileAds.shared.isApplicationMuted = shouldMute
             call.resolve([:])
         } else {
             call.reject("muted property cannot be null")
@@ -87,7 +87,7 @@ public class AdMobPlugin: CAPPlugin, CAPBridgedPlugin {
             // Clamp volumes.
             if volume < 0.0 {volume = 0.0} else if volume > 1.0 {volume = 1.0}
 
-            GADMobileAds.sharedInstance().applicationVolume = volume
+            MobileAds.shared.applicationVolume = volume
 
             call.resolve([:])
         } else {
@@ -102,7 +102,7 @@ public class AdMobPlugin: CAPPlugin, CAPBridgedPlugin {
      */
     @objc func showBanner(_ call: CAPPluginCall) {
         let adUnitID = getAdId(call, "ca-app-pub-3940256099942544/6300978111")
-        let request = self.GADRequestWithOption(call.getBool("npa") ?? false)
+        let request = self.RequestWithOption(call.getBool("npa") ?? false)
 
         DispatchQueue.main.async {
             self.bannerExecutor.showBanner(call, request, adUnitID)
@@ -133,7 +133,7 @@ public class AdMobPlugin: CAPPlugin, CAPBridgedPlugin {
      */
     @objc func prepareInterstitial(_ call: CAPPluginCall) {
         let adUnitID = getAdId(call, "ca-app-pub-3940256099942544/1033173712")
-        let request = self.GADRequestWithOption(call.getBool("npa") ?? false)
+        let request = self.RequestWithOption(call.getBool("npa") ?? false)
 
         DispatchQueue.main.async {
             self.adInterstitialExecutor.prepareInterstitial(call, request, adUnitID)
@@ -152,7 +152,7 @@ public class AdMobPlugin: CAPPlugin, CAPBridgedPlugin {
      */
     @objc func prepareRewardVideoAd(_ call: CAPPluginCall) {
         let adUnitID = getAdId(call, "ca-app-pub-3940256099942544/1712485313")
-        let request = self.GADRequestWithOption(call.getBool("npa") ?? false)
+        let request = self.RequestWithOption(call.getBool("npa") ?? false)
 
         DispatchQueue.main.async {
             self.adRewardExecutor.prepareRewardVideoAd(call, request, adUnitID)
@@ -171,7 +171,7 @@ public class AdMobPlugin: CAPPlugin, CAPBridgedPlugin {
      */
     @objc func prepareRewardInterstitialAd(_ call: CAPPluginCall) {
         let adUnitID = getAdId(call, "ca-app-pub-3940256099942544/6978759866")
-        let request = self.GADRequestWithOption(call.getBool("npa") ?? false)
+        let request = self.RequestWithOption(call.getBool("npa") ?? false)
 
         DispatchQueue.main.async {
             self.adRewardInterstitialExecutor.prepareRewardInterstitialAd(call, request, adUnitID)
@@ -254,11 +254,11 @@ public class AdMobPlugin: CAPPlugin, CAPBridgedPlugin {
         return adUnitID
     }
 
-    private func GADRequestWithOption(_ npa: Bool) -> GADRequest {
-        let request = GADRequest()
+    private func RequestWithOption(_ npa: Bool) -> Request {
+        let request = Request()
 
         if npa {
-            let extras = GADExtras()
+            let extras = Extras()
             extras.additionalParameters = ["npa": "1"]
             request.register(extras)
         }
@@ -272,31 +272,27 @@ public class AdMobPlugin: CAPPlugin, CAPBridgedPlugin {
     private func setRequestConfiguration(_ call: CAPPluginCall) {
 
         if call.getBool("initializeForTesting") ?? false {
-            GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = call.getArray("testingDevices", String.self) ?? []
+            MobileAds.shared.requestConfiguration.testDeviceIdentifiers = call.getArray("testingDevices", String.self) ?? []
         }
 
         if call.getBool("tagForChildDirectedTreatment") == true {
-            GADMobileAds.sharedInstance().requestConfiguration.tagForChildDirectedTreatment = true
+            MobileAds.shared.requestConfiguration.tagForChildDirectedTreatment = 1
         }
 
         if call.getBool("tagForUnderAgeOfConsent") == true {
-            GADMobileAds.sharedInstance().requestConfiguration.tagForUnderAgeOfConsent = true
+            MobileAds.shared.requestConfiguration.tagForUnderAgeOfConsent = 1
         }
 
         if call.getString("maxAdContentRating") != nil {
             switch call.getString("maxAdContentRating") {
             case "General":
-                GADMobileAds.sharedInstance().requestConfiguration.maxAdContentRating =
-                    GADMaxAdContentRating.general
+                MobileAds.shared.requestConfiguration.maxAdContentRating = .general
             case "ParentalGuidance":
-                GADMobileAds.sharedInstance().requestConfiguration.maxAdContentRating =
-                    GADMaxAdContentRating.parentalGuidance
+                MobileAds.shared.requestConfiguration.maxAdContentRating = .parentalGuidance
             case "Teen":
-                GADMobileAds.sharedInstance().requestConfiguration.maxAdContentRating =
-                    GADMaxAdContentRating.teen
+                MobileAds.shared.requestConfiguration.maxAdContentRating = .teen
             case "MatureAudience":
-                GADMobileAds.sharedInstance().requestConfiguration.maxAdContentRating =
-                    GADMaxAdContentRating.matureAudience
+                MobileAds.shared.requestConfiguration.maxAdContentRating = .matureAudience
             default:
                 print("maxAdContentRating can't find value")
             }

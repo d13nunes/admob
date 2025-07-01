@@ -6,7 +6,7 @@ public enum FullScreenAdEventName: String {
 
     /**
      * Follow iOS Event Name
-     * https://developers.google.com/admob/ios/api/reference/Protocols/GADFullScreenContentDelegate#-addidpresentfullscreencontent:
+     * https://developers.google.com/admob/ios/api/reference/Protocols/FullScreenContentDelegate#-addidpresentfullscreencontent:
      */
     case adDidDismissFullScreenContent = "adDidDismissFullScreenContent"
 }
